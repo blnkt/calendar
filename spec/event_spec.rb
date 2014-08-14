@@ -58,4 +58,17 @@ describe 'Event' do
       expect(Event.by_month('2014-8-12')).to eq [before_during, during_during, during_after, before_after] #8/01 - 8/31
     end
   end
+
+  describe '.next_month' do
+    it 'lists all events within a month' do
+      before_before = Event.create({description: 'PDXPop', start_date: '2014-07-01', end_date: '2014-07-02 12:00'})
+      before_during = Event.create({description: 'MFNW', start_date: '2014-07-09', end_date: '2014-08-13'})
+      during_during = Event.create({description: 'Tech-crawl', start_date: '2014-08-12 20:00', end_date: '2014-08-31 20:00'})
+      during_after = Event.create({description: 'PDXPop', start_date: '2014-08-15', end_date: '2014-09-01 12:00'})
+      after_after = Event.create({description: 'PDXPop', start_date: '2014-09-20', end_date: '2014-09-23 12:00'})
+      before_after = Event.create({description: 'PDXPop', start_date: '2014-07-06', end_date: '2014-09-23 12:00'})
+      Event.by_month('2014-8-12')
+      expect(Event.next_month).to eq [during_after, after_after, before_after] #8/01 - 8/31
+    end
+  end
 end
