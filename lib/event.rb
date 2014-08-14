@@ -15,13 +15,19 @@ class Event < ActiveRecord::Base
     d = date.split('-')[2].to_i
     date_time = Time.new(y, m, d)
     previous_sunday = date_time - date_time.wday.day
-
     next_sunday = previous_sunday + 1.week
-    Event.all.where("start_date <= ? AND end_date >= ? OR start_date <= ? AND end_date >= ?", previous_sunday, previous_sunday, next_sunday, previous_sunday)
+    Event.all.where.not("start_date < ? AND end_date < ? OR start_date > ? AND end_date > ?", previous_sunday, previous_sunday, next_sunday, next_sunday)
   end
 
   def self.by_month date
-
+   # binding.pry
+    y = date.split('-')[0].to_i
+    m = date.split('-')[1].to_i
+    d = date.split('-')[2].to_i
+    date_time = Time.new(y, m, d)
+    first = Time.new(y, m, 1)
+    last = Time.new(y, m+1, 1) - 1.day
+    Event.all.where.not("start_date < ? AND end_date < ? OR start_date > ? AND end_date > ?", first, first, last, last)
   end
 end
 

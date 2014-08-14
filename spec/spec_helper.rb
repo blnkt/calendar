@@ -1,4 +1,5 @@
 require 'bundler/setup'
+
 Bundler.require(:default, :test)
 
 database_configurations = YAML::load(File.open('./db/config.yml'))
