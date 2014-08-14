@@ -19,12 +19,43 @@ describe 'Event' do
   end
 
   describe '.future_events' do
-    it 'lists all events in the future' do
-      event1 = Event.create({description: 'Tech-crawl', start_date: '2014-08-14 20:00'})
-      event2 = Event.create({description: 'MFNW', start_date: '2014-08-15'})
-      event3 = Event.create({description: 'PDXPop', start_date: '2014-06-12 12:00'})
-      p Event.future_events
+    it 'lists all events with end_date in the future' do
+      event1 = Event.create({description: 'Tech-crawl', start_date: '2014-08-10 20:00', end_date: '2014-08-16 20:00'})
+      event2 = Event.create({description: 'MFNW', end_date: '2014-08-15'})
+      event3 = Event.create({description: 'PDXPop', end_date: '2014-06-12 12:00'})
       expect(Event.future_events).to eq [event1, event2]
+    end
+  end
+
+  describe '.by_date' do
+    it 'lists all events on a given date' do
+      event1 = Event.create({description: 'Tech-crawl', start_date: '2014-08-10 20:00', end_date: '2014-08-16 20:00'})
+      event2 = Event.create({description: 'MFNW', start_date: '2014-08-15', end_date: '2014-08-15'})
+      expect(Event.by_date('2014-8-12')).to eq [event1]
+    end
+  end
+
+  describe '.by_week' do
+    it 'lists all events within a week' do
+      before_before = Event.create({description: 'PDXPop', start_date: '2014-08-01', end_date: '2014-08-02 12:00'})
+      before_during = Event.create({description: 'MFNW', start_date: '2014-08-09', end_date: '2014-08-13'})
+      during_during = Event.create({description: 'Tech-crawl', start_date: '2014-08-12 20:00', end_date: '2014-08-15 20:00'})
+      during_after = Event.create({description: 'PDXPop', start_date: '2014-08-15', end_date: '2014-08-23 12:00'})
+      after_after = Event.create({description: 'PDXPop', start_date: '2014-08-20', end_date: '2014-08-23 12:00'})
+      before_after = Event.create({description: 'PDXPop', start_date: '2014-08-06', end_date: '2014-08-23 12:00'})
+      expect(Event.by_week('2014-8-12')).to eq [before_during, during_during, during_after, before_after] #8/10 - 8/17
+    end
+  end
+
+  describe '.by_month' do
+    it 'lists all events within a month' do
+      before_before = Event.create({description: 'PDXPop', start_date: '2014-07-01', end_date: '2014-07-02 12:00'})
+      before_during = Event.create({description: 'MFNW', start_date: '2014-07-09', end_date: '2014-08-13'})
+      during_during = Event.create({description: 'Tech-crawl', start_date: '2014-08-12 20:00', end_date: '2014-08-15 20:00'})
+      during_after = Event.create({description: 'PDXPop', start_date: '2014-08-15', end_date: '2014-09-23 12:00'})
+      after_after = Event.create({description: 'PDXPop', start_date: '2014-09-20', end_date: '2014-09-23 12:00'})
+      before_after = Event.create({description: 'PDXPop', start_date: '2014-07-06', end_date: '2014-09-23 12:00'})
+      expect(Event.by_month('2014-8-12')).to eq [before_during, during_during, during_after, before_after] #8/01 - 8/31
     end
   end
 end
